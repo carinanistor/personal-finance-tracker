@@ -7,10 +7,11 @@ library's `net/http` and its `ServeMux`. It runs in a container built by the
 two-stage `Dockerfile`; CI runs `go vet` and `go test -race` and publishes the
 image only if they pass.
 
-Today a request goes: `ServeMux` -> handler in `cmd/app/main.go` -> JSON
-response. Only the four common routes exist (`/health`, `/version`, `/`,
-`POST /reset`). `internal/version` reports the build, and `internal/money`
-holds the exact money type, which nothing calls yet.
+Today a request goes: `ServeMux` (built by `newMux` in `cmd/app/main.go`) ->
+handler -> JSON response. Only the four common routes exist (`/health`,
+`/version`, `/`, `POST /reset`) and they are covered by an `httptest` test.
+`internal/version` reports the build, and `internal/money` holds the exact
+money type, which nothing calls yet.
 
 The intended shape for the rest, following the project description:
 `csvimport` turns an export into valid rows plus rejections, `store` holds
@@ -72,5 +73,6 @@ Not built:
   routes; the helper exists in `main.go` but nothing uses it yet.
 - `POST /reset` does not clear anything yet, because no state exists.
 - The 12-month cap on date ranges.
-- Tests for all of the above. Only `money` has real tests so far.
+- Tests for all of the above. Only `money` and the four common routes have
+  real tests so far.
 - The final report, `docs/report.docx`.

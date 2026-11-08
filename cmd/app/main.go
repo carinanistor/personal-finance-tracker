@@ -33,34 +33,7 @@ func run() error {
 
 	log := slog.New(slog.NewTextHandler(os.Stderr, nil))
 
-	mux := http.NewServeMux()
-
-	mux.HandleFunc("GET /version", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		_ = version.WriteJSON(w)
-	})
-
-	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
-		writeJSON(w, http.StatusOK, map[string]any{
-			"status":         "ok",
-			"uptime_seconds": int(time.Since(started).Seconds()),
-		})
-	})
-
-	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		fmt.Fprint(w, `<!doctype html><html lang="en"><meta charset="utf-8">
-<title>Personal Finance Tracker</title><body>
-<h1>Personal Finance Tracker</h1>
-<p>Nistor Carina, group DMWD</p>
-<p>Project 2: Personal Finance Tracker</p>
-</body></html>`)
-	})
-
-	mux.HandleFunc("POST /reset", func(w http.ResponseWriter, r *http.Request) {
-
-		w.WriteHeader(http.StatusNoContent)
-	})
+	mux := newMux()
 
 	srv := &http.Server{
 		Addr:         ":8080",
@@ -90,6 +63,38 @@ func run() error {
 		defer cancel()
 		return srv.Shutdown(shutdownCtx)
 	}
+}
+
+func newMux() *http.ServeMux {
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("GET /version", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_ = version.WriteJSON(w)
+	})
+
+	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
+		writeJSON(w, http.StatusOK, map[string]any{
+			"status":         "ok",
+			"uptime_seconds": int(time.Since(started).Seconds()),
+		})
+	})
+
+	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		fmt.Fprint(w, `<!doctype html><html lang="en"><meta charset="utf-8">
+<title>Personal Finance Tracker</title><body>
+<h1>Personal Finance Tracker</h1>
+<p>Nistor Carina, group DMWD</p>
+<p>Project 2: Personal Finance Tracker</p>
+</body></html>`)
+	})
+
+	mux.HandleFunc("POST /reset", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNoContent)
+	})
+
+	return mux
 }
 
 func writeJSON(w http.ResponseWriter, status int, body any) {
