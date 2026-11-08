@@ -17,9 +17,9 @@ RUN CGO_ENABLED=0 go build \
 
 FROM alpine:3.21
 
-LABEL org.opencontainers.image.title="ATAD project" \
-      org.opencontainers.image.authors="Surname Firstname <firstname.surname@student.upt.ro>" \
-      org.opencontainers.image.source="https://github.com/user/repo"
+LABEL org.opencontainers.image.title="Personal Finance Tracker" \
+      org.opencontainers.image.authors="Nistor Carina <carina.nistor@student.upt.ro>" \
+      org.opencontainers.image.source="https://github.com/carinanistor/personal-finance-tracker"
 
 RUN adduser -D -u 10001 app
 

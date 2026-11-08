@@ -49,12 +49,12 @@ func run() error {
 
 	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		fmt.Fprintf(w, `<!doctype html><html lang="en"><meta charset="utf-8">
-<title>%s</title><body>
-<h1>%s</h1>
-<p>[Surname Firstname], group [group]</p>
-<p>Project [number]: [title]</p>
-</body></html>`, version.Current().App, version.Current().App)
+		fmt.Fprint(w, `<!doctype html><html lang="en"><meta charset="utf-8">
+<title>Personal Finance Tracker</title><body>
+<h1>Personal Finance Tracker</h1>
+<p>Nistor Carina, group DMWD</p>
+<p>Project 2: Personal Finance Tracker</p>
+</body></html>`)
 	})
 
 	mux.HandleFunc("POST /reset", func(w http.ResponseWriter, r *http.Request) {
