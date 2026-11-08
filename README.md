@@ -1,21 +1,34 @@
-# [Project title]
+# Personal Finance Tracker
 
-[One paragraph: what this program does and who would use it. Replace this
-whole file — it is your project's front door, and it is marked.]
+A small web service for tracking what you earn and spend. Transactions come in
+from a bank CSV export or are added by hand, get sorted into categories by rules
+the user writes, and come back out as a monthly report. It is meant for one
+person keeping an eye on their own money.
 
-- **Student:** [Surname Firstname], group [group]
-- **Project:** [number and title from the project description]
+- **Student:** Nistor Carina, group DMWD
+- **Project:** 2 - Personal Finance Tracker
 - **Language:** Go
 
 ## What it does
 
-[Two or three paragraphs. What problem it solves, what it does not do, and
-what state it is in.]
+The service has no idea what a transaction means, so categorisation is an
+ordered list of rules the user states and can change: a rule is a piece of text
+to look for in the description and the category to assign. The first matching
+rule wins, and the service never reorders them.
+
+Money is never a floating-point number. Every amount is held as a whole number
+of cents, so `0.10` plus `0.20` is exactly `0.30`.
+
+**State (milestone 1):** the service starts, answers the four common routes
+(`/health`, `/version`, `/`, `POST /reset`) and the exact-money type is written
+and tested. The project routes (transactions, CSV import, rules, budgets,
+reports) are **not built yet**. `docs/architecture.md` lists exactly what is
+missing.
 
 ## How to run it
 
 ```
-docker run --rm -p 8080:8080 ghcr.io/[user]/[repo]:latest
+docker run --rm -p 8080:8080 ghcr.io/carinanistor/personal-finance-tracker:latest
 ```
 
 To build and run without Docker:
@@ -25,38 +38,20 @@ go run ./cmd/app
 go run ./cmd/app --version
 ```
 
+To run the tests:
+
+```
+go vet ./...
+go test ./... -race
+```
+
 ## What you should see
 
-[What a successful run looks like. If it is a service, one request and its
-response. If it is a tool, one command and its output. A reader who has never
-seen your project must be able to tell whether it worked.]
+```
+$ curl -i http://localhost:8080/health
+HTTP/1.1 200 OK
+{"status":"ok","uptime_seconds":3}
+```
 
----
-
-## Before you delete these notes
-
-**Fill in `atad.json` first.** Name, group, student id, email, project number
-and title, language, and the command that runs your project. The marking script reads this file. A field left as
-`[placeholder]` counts as missing.
-
-**`--version` is part of the contract.** It must print one line of JSON with
-`app`, `version`, `commit` and `built_at`, and exit 0. The `commit` value is
-stamped into the binary by the Dockerfile from the SHA that CI supplies, which
-is how it is proved that the published image was built from the code you
-submitted. Do not print it yourself, and do not remove the test that checks it.
-
-**The four contract routes are not optional.** `/health`, `/version`, `/` and
-`POST /reset` must answer exactly as the project document specifies, in every
-project. They are checked automatically, and a right answer with the wrong
-status code is a wrong answer.
-
-**Layout.** `cmd/app` is the entry point, `internal/` is your own packages,
-and `docs/` holds your documentation. Add packages under `internal/` as the
-project grows; a single 800-line `main.go` is not a design.
-
-**`docs/` has fixed names.** `docs/architecture.md` is due in week 7 and
-`docs/report.docx` at the end. `docs/README.md` explains both — read it, and do
-not edit or delete it.
-
-**Do not commit** `coverage/`, build output, or anything with a credential in
-it. `.gitignore` already covers the usual cases.
+`curl http://localhost:8080/version` returns `app`, `version`, `commit` and
+`built_at`, and `POST /reset` returns `204`.
